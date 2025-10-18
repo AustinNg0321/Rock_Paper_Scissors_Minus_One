@@ -35,7 +35,6 @@ text = "Rock Paper Scissors Minus One"
 
 [node name="BackgroundMusicPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_jlsqs")
-bus = &"Volume"
 
 [node name="Music" type="Node" parent="."]
 script = ExtResource("5_q8u5g")
