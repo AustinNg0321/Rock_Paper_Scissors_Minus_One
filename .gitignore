@@ -15,8 +15,6 @@ export_credentials.cfg
 .mono/
 data_*/
 mono_crash.*.json
-*.csproj
-*.sln
 
 # OS junk
 .DS_Store
