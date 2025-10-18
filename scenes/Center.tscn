@@ -1,0 +1,277 @@
+[gd_scene load_steps=13 format=3 uid="uid://ra2bylfd1hfo"]
+
+[ext_resource type="Script" uid="uid://dh3ibdllxjk8j" path="res://scripts/Center.cs" id="1_j4roy"]
+[ext_resource type="PackedScene" uid="uid://cbifq0xxlcqju" path="res://scenes/ChooseRPS.tscn" id="2_n7hmb"]
+[ext_resource type="ButtonGroup" uid="uid://c3d7f2g1f4lej" path="res://assets/button_groups/remove_choice.tres" id="3_81ba7"]
+[ext_resource type="Texture2D" uid="uid://bw33hqgeqvivm" path="res://assets/textures/circle2.png" id="3_761w5"]
+[ext_resource type="Script" uid="uid://clb6ce11cas43" path="res://scripts/BotMove.cs" id="3_efbs3"]
+[ext_resource type="Texture2D" uid="uid://cmqwvaorr6t3y" path="res://assets/textures/green_arrow.png" id="4_snorg"]
+[ext_resource type="Script" uid="uid://1yvmt3hlepyt" path="res://scripts/ConfirmMoveButton.cs" id="7_81ba7"]
+[ext_resource type="Script" uid="uid://cop28sxgkh3x0" path="res://scripts/MoveHelper.cs" id="7_snorg"]
+[ext_resource type="Script" uid="uid://3ayr5wxaj5ya" path="res://scripts/RemoveHandButton.cs" id="8_fvwi5"]
+[ext_resource type="Texture2D" uid="uid://sq0mknfgehkm" path="res://assets/textures/white_restart.png" id="9_fvwi5"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_n7hmb"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_81ba7"]
+
+[node name="Center" type="Node2D"]
+script = ExtResource("1_j4roy")
+_timerPath = NodePath("Timer")
+_playAgainButtonPath = NodePath("PlayAgainButton")
+_remove1Path = NodePath("PlayerMove/Remove1")
+_remove2Path = NodePath("PlayerMove/Remove2")
+_chooseRPS1Path = NodePath("PlayerMove/ChooseRPS1")
+_chooseRPS2Path = NodePath("PlayerMove/ChooseRPS2")
+_botDisplay1Path = NodePath("BotMove/Display1")
+_botDisplay2Path = NodePath("BotMove/Display2")
+_botLabelPath = NodePath("Labels/BotLabel")
+_tournamentLabelPath = NodePath("Labels/TournamentLabel")
+_wdlLabelPath = NodePath("Labels/WDLLabel")
+_warningLabelPath = NodePath("Labels/WarningLabel")
+_roundLabelPath = NodePath("Labels/RoundLabel")
+_playerScoreLabelPath = NodePath("Labels/PlayerScoreLabel")
+_botScoreLabelPath = NodePath("Labels/BotScoreLabel")
+_drawLabelPath = NodePath("Labels/DrawLabel")
+_moveHelperPath = NodePath("MoveHelper")
+_confirmMoveButtonPath = NodePath("ConfirmMoveButton")
+_removeHandButtonPath = NodePath("RemoveHandButton")
+_botPath = NodePath("BotMove")
+_soundEffectPlayerPath = NodePath("SoundEffectPlayer")
+
+[node name="PlayerMove" type="Node2D" parent="."]
+
+[node name="ChooseRPS1" parent="PlayerMove" instance=ExtResource("2_n7hmb")]
+position = Vector2(129, 151)
+scale = Vector2(0.5, 0.5)
+
+[node name="ChooseRPS2" parent="PlayerMove" instance=ExtResource("2_n7hmb")]
+position = Vector2(132, 404)
+scale = Vector2(0.5, 0.5)
+
+[node name="Remove1" type="TextureButton" parent="PlayerMove"]
+visible = false
+offset_left = 22.0
+offset_top = 222.0
+offset_right = 199.0
+offset_bottom = 373.0
+scale = Vector2(0.5, 0.5)
+disabled = true
+toggle_mode = true
+button_group = ExtResource("3_81ba7")
+texture_normal = ExtResource("4_snorg")
+texture_pressed = ExtResource("4_snorg")
+texture_hover = ExtResource("4_snorg")
+texture_disabled = ExtResource("4_snorg")
+texture_focused = ExtResource("4_snorg")
+
+[node name="Remove2" type="TextureButton" parent="PlayerMove"]
+visible = false
+offset_left = 22.0
+offset_top = 473.0
+offset_right = 199.0
+offset_bottom = 624.0
+scale = Vector2(0.5, 0.5)
+disabled = true
+toggle_mode = true
+button_group = ExtResource("3_81ba7")
+texture_normal = ExtResource("4_snorg")
+texture_pressed = ExtResource("4_snorg")
+texture_hover = ExtResource("4_snorg")
+texture_disabled = ExtResource("4_snorg")
+texture_focused = ExtResource("4_snorg")
+
+[node name="BotMove" type="Node2D" parent="."]
+script = ExtResource("3_efbs3")
+_display1Path = NodePath("Display1")
+_display2Path = NodePath("Display2")
+
+[node name="Display1" type="Sprite2D" parent="BotMove"]
+position = Vector2(790, 260)
+scale = Vector2(1.2, 1.206)
+texture = SubResource("ImageTexture_n7hmb")
+
+[node name="Circle1" type="Sprite2D" parent="BotMove/Display1"]
+show_behind_parent = true
+scale = Vector2(0.63, 0.63)
+texture = ExtResource("3_761w5")
+
+[node name="Display2" type="Sprite2D" parent="BotMove"]
+position = Vector2(790, 515)
+scale = Vector2(1.2, 1.25)
+texture = SubResource("ImageTexture_81ba7")
+
+[node name="Circle2" type="Sprite2D" parent="BotMove/Display2"]
+show_behind_parent = true
+position = Vector2(-3.33333, -0.8)
+scale = Vector2(0.63, 0.602)
+texture = ExtResource("3_761w5")
+
+[node name="MoveHelper" type="Node2D" parent="."]
+script = ExtResource("7_snorg")
+_chooseRPS1Path = NodePath("../PlayerMove/ChooseRPS1")
+_chooseRPS2Path = NodePath("../PlayerMove/ChooseRPS2")
+_remove1Path = NodePath("../PlayerMove/Remove1")
+_remove2Path = NodePath("../PlayerMove/Remove2")
+
+[node name="ConfirmMoveButton" type="Button" parent="."]
+offset_left = 380.0
+offset_top = 324.0
+offset_right = 680.0
+offset_bottom = 424.0
+theme_override_font_sizes/font_size = 32
+text = "Confirm Move"
+script = ExtResource("7_81ba7")
+metadata/_edit_use_anchors_ = true
+
+[node name="RemoveHandButton" type="Button" parent="."]
+offset_left = 379.0
+offset_top = 325.0
+offset_right = 679.0
+offset_bottom = 425.0
+theme_override_font_sizes/font_size = 32
+disabled = true
+text = "Remove Hand"
+script = ExtResource("8_fvwi5")
+metadata/_edit_use_anchors_ = true
+
+[node name="PlayAgainButton" type="TextureButton" parent="."]
+visible = false
+offset_left = 994.0
+offset_top = 522.0
+offset_right = 1094.0
+offset_bottom = 622.0
+disabled = true
+texture_normal = ExtResource("9_fvwi5")
+texture_pressed = ExtResource("9_fvwi5")
+texture_hover = ExtResource("9_fvwi5")
+texture_disabled = ExtResource("9_fvwi5")
+texture_focused = ExtResource("9_fvwi5")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="Labels" type="Node2D" parent="."]
+
+[node name="WarningLabel" type="Label" parent="Labels"]
+offset_left = 270.0
+offset_top = 584.0
+offset_right = 790.0
+offset_bottom = 639.0
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+
+[node name="PlayerLabel" type="Label" parent="Labels"]
+offset_left = 99.0
+offset_top = 40.0
+offset_right = 389.0
+offset_bottom = 172.0
+theme_override_font_sizes/font_size = 48
+text = "Player"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="BotLabel" type="Label" parent="Labels"]
+offset_left = 670.0
+offset_top = 45.0
+offset_right = 897.0
+offset_bottom = 177.0
+theme_override_font_sizes/font_size = 36
+text = "Bot (Easy)"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="RoundLabel" type="Label" parent="Labels"]
+offset_left = 907.0
+offset_top = 69.0
+offset_right = 1157.0
+offset_bottom = 169.0
+theme_override_font_sizes/font_size = 40
+text = "Round #1"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="WDLLabel" type="Label" parent="Labels"]
+offset_left = 921.0
+offset_top = 340.0
+offset_right = 1084.0
+offset_bottom = 458.0
+theme_override_font_sizes/font_size = 40
+
+[node name="PlayerScoreLabel" type="Label" parent="Labels"]
+offset_left = 358.0
+offset_top = 58.0
+offset_right = 398.0
+offset_bottom = 146.0
+theme_override_font_sizes/font_size = 64
+text = "0"
+
+[node name="BotScoreLabel" type="Label" parent="Labels"]
+offset_left = 596.0
+offset_top = 64.0
+offset_right = 636.0
+offset_bottom = 152.0
+theme_override_font_sizes/font_size = 64
+text = "0"
+
+[node name="TournamentLabel" type="Label" parent="Labels"]
+offset_left = 886.0
+offset_top = 9.0
+offset_right = 1136.0
+offset_bottom = 97.0
+theme_override_font_sizes/font_size = 40
+text = "Classic"
+horizontal_alignment = 1
+
+[node name="DrawLabel" type="Label" parent="Labels"]
+offset_left = 478.0
+offset_top = 64.0
+offset_right = 564.0
+offset_bottom = 152.0
+theme_override_font_sizes/font_size = 64
+text = "0"
+
+[node name="SlashLabel1" type="Label" parent="Labels"]
+offset_left = 545.0
+offset_top = 61.0
+offset_right = 585.0
+offset_bottom = 149.0
+theme_override_font_sizes/font_size = 64
+text = "/"
+
+[node name="SlashLabel2" type="Label" parent="Labels"]
+offset_left = 425.0
+offset_top = 56.0
+offset_right = 465.0
+offset_bottom = 144.0
+theme_override_font_sizes/font_size = 64
+text = "/"
+
+[node name="SoundEffectPlayer" type="AudioStreamPlayer" parent="."]
+bus = &"Volume"
+
+[connection signal="NextRound" from="." to="." method="OnNextRound"]
+[connection signal="NextRound" from="." to="ConfirmMoveButton" method="OnNextRound"]
+[connection signal="NextRound" from="." to="RemoveHandButton" method="OnNextRound"]
+[connection signal="SendPlayerMoves" from="." to="BotMove" method="OnSendPlayerMoves"]
+[connection signal="SetDifficulty" from="." to="BotMove" method="OnSetDifficulty"]
+[connection signal="pressed" from="PlayerMove/Remove1" to="." method="OnRemove1Pressed"]
+[connection signal="pressed" from="PlayerMove/Remove2" to="." method="OnRemove2Pressed"]
+[connection signal="EndRound" from="BotMove" to="." method="OnEndRound"]
+[connection signal="SendBotMoves" from="BotMove" to="." method="OnSendBotMoves"]
+[connection signal="pressed" from="ConfirmMoveButton" to="." method="OnConfirmMoveButtonPressed"]
+[connection signal="pressed" from="ConfirmMoveButton" to="PlayerMove/ChooseRPS1" method="OnActionButtonPressed"]
+[connection signal="pressed" from="ConfirmMoveButton" to="PlayerMove/ChooseRPS2" method="OnActionButtonPressed"]
+[connection signal="pressed" from="ConfirmMoveButton" to="BotMove" method="OnConfirmMoveButtonPressed"]
+[connection signal="pressed" from="ConfirmMoveButton" to="ConfirmMoveButton" method="OnPressed"]
+[connection signal="pressed" from="ConfirmMoveButton" to="RemoveHandButton" method="OnConfirmMoveButtonPressed"]
+[connection signal="pressed" from="RemoveHandButton" to="." method="OnRemoveHandButtonPressed"]
+[connection signal="pressed" from="RemoveHandButton" to="PlayerMove/ChooseRPS1" method="OnRemoveHandButtonPressed"]
+[connection signal="pressed" from="RemoveHandButton" to="PlayerMove/ChooseRPS2" method="OnRemoveHandButtonPressed"]
+[connection signal="pressed" from="RemoveHandButton" to="BotMove" method="OnRemoveHandButtonPressed"]
+[connection signal="pressed" from="RemoveHandButton" to="RemoveHandButton" method="OnPressed"]
+[connection signal="pressed" from="PlayAgainButton" to="." method="OnPlayAgainButtonPressed"]
+[connection signal="timeout" from="Timer" to="." method="OnTimerTimeout"]
+[connection signal="finished" from="SoundEffectPlayer" to="." method="OnSoundEffectFinished"]

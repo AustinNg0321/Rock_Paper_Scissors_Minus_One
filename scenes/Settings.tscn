@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=3 uid="uid://bdc2hyogbs2uh"]
+
+[ext_resource type="Script" uid="uid://g0wjl0rhqdfb" path="res://scripts/Settings.cs" id="1_i47rn"]
+[ext_resource type="Texture2D" uid="uid://7wf15hjolv1y" path="res://assets/textures/Kenney_gameIcons/PNG/White/1x/home.png" id="2_i47rn"]
+[ext_resource type="Texture2D" uid="uid://c5dmkt2041d0r" path="res://assets/textures/Kenney_gameIcons/PNG/White/1x/audioOff.png" id="3_46duy"]
+
+[node name="Settings" type="Node2D"]
+script = ExtResource("1_i47rn")
+_musicIconPath = NodePath("Music/MusicIcon")
+_musicSliderPath = NodePath("Music/MusicSlider")
+
+[node name="HomeButton" type="TextureButton" parent="."]
+offset_left = 949.0
+offset_top = 3.0
+offset_right = 1129.0
+offset_bottom = 183.0
+texture_normal = ExtResource("2_i47rn")
+texture_pressed = ExtResource("2_i47rn")
+texture_hover = ExtResource("2_i47rn")
+texture_disabled = ExtResource("2_i47rn")
+texture_focused = ExtResource("2_i47rn")
+stretch_mode = 0
+
+[node name="Music" type="Node2D" parent="."]
+
+[node name="MusicIcon" type="Sprite2D" parent="Music"]
+position = Vector2(335.5, 216.75)
+scale = Vector2(3.22, 2.97)
+texture = ExtResource("3_46duy")
+
+[node name="MusicSlider" type="HSlider" parent="Music"]
+offset_left = 436.0
+offset_top = 144.0
+offset_right = 762.0
+offset_bottom = 294.0
+max_value = 1.0
+step = 0.1
+tick_count = 11
+
+[connection signal="pressed" from="HomeButton" to="." method="OnHomeButtonPressed"]
+[connection signal="drag_ended" from="Music/MusicSlider" to="." method="OnHSliderDragEnded"]

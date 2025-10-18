@@ -1,0 +1,106 @@
+[gd_scene load_steps=5 format=3 uid="uid://c5nicpyorw47y"]
+
+[ext_resource type="Script" uid="uid://r0ybm0bsftn" path="res://scripts/SelectionMenu.cs" id="1_8he5u"]
+[ext_resource type="PackedScene" uid="uid://ra2bylfd1hfo" path="res://scenes/Center.tscn" id="2_5k557"]
+[ext_resource type="Texture2D" uid="uid://bhjk3nmtnggby" path="res://assets/textures/white_play.png" id="3_dhdfh"]
+[ext_resource type="Texture2D" uid="uid://7wf15hjolv1y" path="res://assets/textures/Kenney_gameIcons/PNG/White/1x/home.png" id="4_dhdfh"]
+
+[node name="SelectionMenu" type="Node2D"]
+script = ExtResource("1_8he5u")
+_tournamentItemListPath = NodePath("TournamentMenu/ItemList")
+_difficultyItemListPath = NodePath("DifficultyMenu/ItemList")
+_warningPath = NodePath("Warning")
+
+[node name="Center" parent="." instance=ExtResource("2_5k557")]
+visible = false
+position = Vector2(3, 6)
+
+[node name="TournamentMenu" type="Node2D" parent="."]
+
+[node name="Label" type="Label" parent="TournamentMenu"]
+offset_left = 85.0
+offset_top = 112.0
+offset_right = 470.0
+offset_bottom = 200.0
+theme_override_font_sizes/font_size = 64
+text = "Tournament"
+
+[node name="ItemList" type="ItemList" parent="TournamentMenu"]
+offset_left = 36.0
+offset_top = 208.0
+offset_right = 505.0
+offset_bottom = 493.0
+theme_override_font_sizes/font_size = 64
+item_count = 3
+item_0/text = "Classic"
+item_1/text = "First To Win 3"
+item_2/text = "First To Win 5"
+
+[node name="DifficultyMenu" type="Node2D" parent="."]
+
+[node name="Label" type="Label" parent="DifficultyMenu"]
+offset_left = 749.0
+offset_top = 110.0
+offset_right = 1028.0
+offset_bottom = 198.0
+theme_override_font_sizes/font_size = 64
+text = "Difficulty"
+
+[node name="ItemList" type="ItemList" parent="DifficultyMenu"]
+offset_left = 728.0
+offset_top = 206.0
+offset_right = 1049.0
+offset_bottom = 498.0
+theme_override_font_sizes/font_size = 64
+item_count = 3
+item_0/text = "Easy"
+item_1/text = "Medium"
+item_2/text = "Hard"
+
+[node name="StartButton" type="TextureButton" parent="." groups=["game"]]
+offset_left = 538.0
+offset_top = 483.0
+offset_right = 683.0
+offset_bottom = 617.0
+texture_normal = ExtResource("3_dhdfh")
+texture_pressed = ExtResource("3_dhdfh")
+texture_hover = ExtResource("3_dhdfh")
+texture_disabled = ExtResource("3_dhdfh")
+texture_focused = ExtResource("3_dhdfh")
+stretch_mode = 0
+
+[node name="HomeButton" type="TextureButton" parent="."]
+offset_left = 1033.0
+offset_top = 14.0
+offset_right = 1135.0
+offset_bottom = 117.0
+texture_normal = ExtResource("4_dhdfh")
+texture_pressed = ExtResource("4_dhdfh")
+texture_hover = ExtResource("4_dhdfh")
+texture_disabled = ExtResource("4_dhdfh")
+texture_focused = ExtResource("4_dhdfh")
+stretch_mode = 0
+
+[node name="Heading" type="Label" parent="."]
+offset_left = 247.0
+offset_top = 21.0
+offset_right = 921.0
+offset_bottom = 109.0
+theme_override_font_sizes/font_size = 64
+text = "Game Selection Menu"
+
+[node name="Warning" type="RichTextLabel" parent="."]
+offset_left = 15.0
+offset_top = 515.0
+offset_right = 487.0
+offset_bottom = 649.0
+theme_override_font_sizes/bold_italics_font_size = 32
+theme_override_font_sizes/italics_font_size = 32
+theme_override_font_sizes/mono_font_size = 32
+theme_override_font_sizes/normal_font_size = 32
+theme_override_font_sizes/bold_font_size = 32
+scroll_active = false
+
+[connection signal="StartGame" from="." to="Center" method="OnStartGame"]
+[connection signal="pressed" from="StartButton" to="." method="OnStartButtonPressed"]
+[connection signal="pressed" from="HomeButton" to="." method="OnHomeButtonPressed"]

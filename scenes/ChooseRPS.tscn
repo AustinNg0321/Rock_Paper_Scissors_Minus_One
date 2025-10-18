@@ -1,0 +1,108 @@
+[gd_scene load_steps=11 format=3 uid="uid://cbifq0xxlcqju"]
+
+[ext_resource type="Script" uid="uid://bt01ajdymh12r" path="res://scripts/ChooseRPS.cs" id="1_j74mp"]
+[ext_resource type="ButtonGroup" uid="uid://dp0q7736m2lu8" path="res://assets/button_groups/rps_move_choice.tres" id="2_y5o3v"]
+[ext_resource type="Texture2D" uid="uid://co6ober5pj6vd" path="res://assets/textures/rock.png" id="3_tuhaa"]
+[ext_resource type="Texture2D" uid="uid://caapufe78cytv" path="res://assets/textures/paper.png" id="4_0qwpp"]
+[ext_resource type="Texture2D" uid="uid://bs61juqkt25sf" path="res://assets/textures/circle1.png" id="4_y5o3v"]
+[ext_resource type="Texture2D" uid="uid://isouc2fe48b8" path="res://assets/textures/scissors.svg" id="5_okdsy"]
+[ext_resource type="Texture2D" uid="uid://bw33hqgeqvivm" path="res://assets/textures/circle2.png" id="7_tuhaa"]
+
+[sub_resource type="SystemFont" id="SystemFont_tuhaa"]
+subpixel_positioning = 0
+
+[sub_resource type="Theme" id="Theme_0qwpp"]
+default_font = SubResource("SystemFont_tuhaa")
+
+[sub_resource type="ImageTexture" id="ImageTexture_tuhaa"]
+
+[node name="ChooseRPS" type="Node2D"]
+script = ExtResource("1_j74mp")
+_displayPath = NodePath("Display")
+metadata/_edit_lock_ = true
+
+[node name="RockButton" type="TextureButton" parent="."]
+offset_left = 88.0
+offset_top = 12.0
+offset_right = 188.0
+offset_bottom = 112.0
+theme = SubResource("Theme_0qwpp")
+toggle_mode = true
+button_group = ExtResource("2_y5o3v")
+texture_normal = ExtResource("3_tuhaa")
+texture_pressed = ExtResource("3_tuhaa")
+texture_hover = ExtResource("3_tuhaa")
+texture_disabled = ExtResource("3_tuhaa")
+texture_focused = ExtResource("3_tuhaa")
+ignore_texture_size = true
+stretch_mode = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="Circle" type="Sprite2D" parent="RockButton"]
+show_behind_parent = true
+position = Vector2(49, 51)
+scale = Vector2(0.6225, 0.625)
+texture = ExtResource("4_y5o3v")
+
+[node name="PaperButton" type="TextureButton" parent="."]
+offset_left = 13.0
+offset_top = 164.0
+offset_right = 113.0
+offset_bottom = 264.0
+toggle_mode = true
+button_group = ExtResource("2_y5o3v")
+texture_normal = ExtResource("4_0qwpp")
+texture_pressed = ExtResource("4_0qwpp")
+texture_hover = ExtResource("4_0qwpp")
+texture_disabled = ExtResource("4_0qwpp")
+texture_focused = ExtResource("4_0qwpp")
+ignore_texture_size = true
+stretch_mode = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="Circle" type="Sprite2D" parent="PaperButton"]
+show_behind_parent = true
+position = Vector2(48, 53)
+scale = Vector2(0.625, 0.625)
+texture = ExtResource("4_y5o3v")
+metadata/_edit_lock_ = true
+
+[node name="ScissorsButton" type="TextureButton" parent="."]
+offset_left = 93.0
+offset_top = 318.0
+offset_right = 193.0
+offset_bottom = 418.0
+toggle_mode = true
+button_group = ExtResource("2_y5o3v")
+texture_normal = ExtResource("5_okdsy")
+texture_pressed = ExtResource("5_okdsy")
+texture_hover = ExtResource("5_okdsy")
+texture_disabled = ExtResource("5_okdsy")
+texture_focused = ExtResource("5_okdsy")
+ignore_texture_size = true
+stretch_mode = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="Circle" type="Sprite2D" parent="ScissorsButton"]
+show_behind_parent = true
+position = Vector2(44, 51.9999)
+scale = Vector2(0.625, 0.625)
+texture = ExtResource("4_y5o3v")
+metadata/_edit_lock_ = true
+
+[node name="Display" type="Sprite2D" parent="."]
+position = Vector2(306, 218)
+scale = Vector2(2.26, 2.3375)
+texture = SubResource("ImageTexture_tuhaa")
+metadata/_edit_use_anchors_ = true
+
+[node name="Circle2" type="Sprite2D" parent="Display"]
+show_behind_parent = true
+position = Vector2(-2, 0.247961)
+scale = Vector2(0.62571, 0.626886)
+texture = ExtResource("7_tuhaa")
+metadata/_edit_lock_ = true
+
+[connection signal="pressed" from="RockButton" to="." method="OnRockButtonPressed"]
+[connection signal="pressed" from="PaperButton" to="." method="OnPaperButtonPressed"]
+[connection signal="pressed" from="ScissorsButton" to="." method="OnScissorsButtonPressed"]

@@ -1,0 +1,74 @@
+[gd_scene load_steps=3 format=3 uid="uid://dk7ls0oq53efm"]
+
+[ext_resource type="Texture2D" uid="uid://7wf15hjolv1y" path="res://assets/textures/Kenney_gameIcons/PNG/White/1x/home.png" id="1_6h2d6"]
+[ext_resource type="Script" uid="uid://35ldnkyg38g2" path="res://scripts/Info.cs" id="1_jfmby"]
+
+[node name="Info" type="Node2D"]
+script = ExtResource("1_jfmby")
+
+[node name="HomeButton" type="TextureButton" parent="."]
+offset_left = 952.0
+offset_top = 23.0
+offset_right = 1132.0
+offset_bottom = 203.0
+texture_normal = ExtResource("1_6h2d6")
+stretch_mode = 0
+
+[node name="InfoTabs" type="TabContainer" parent="."]
+offset_left = 50.0
+offset_top = 42.0
+offset_right = 931.0
+offset_bottom = 580.0
+current_tab = 0
+
+[node name="Rules" type="Button" parent="InfoTabs"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Each round is divided into 2 stages:
+ -> Stage 1: Each player or bot picks rock/paper/scissors on each hand
+ -> Stage 2: Each player chooses one hand to remove
+ 
+The winner is determined according to classic rock paper scissors results of the remaining hands 
+of each player: paper beats rock, scissors beats paper, rock beats scissors
+
+"
+alignment = 0
+autowrap_mode = 2
+metadata/_tab_index = 0
+
+[node name="Game Settings" type="Button" parent="InfoTabs"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "The game currently offers 3 game modes
+-> Classic: a single round
+-> First To Win 3: The first player or bot to win 3 rounds wins the tournament
+-> First To Win 3: The first player or bot to win 5 rounds wins the tournament
+
+The game also offers 3 difficulty levels: Easy, Medium, and Hard"
+alignment = 0
+autowrap_mode = 2
+metadata/_tab_index = 1
+
+[node name="Credits" type="Button" parent="InfoTabs"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Most images are taken from https://opengameart.org/:
+-> https://opengameart.org/content/rock-collection
+-> https://opengameart.org/content/documents
+-> https://opengameart.org/content/gui-pack 
+-> https://opengameart.org/content/game-icons
+-> https://commons.wikimedia.org/wiki/File:Scissors_icon_black.svg#/media/File:Scissors_icon_black.svg by Inductiveload (19/3/2010)
+-> https://commons.wikimedia.org/wiki/File:Rode_en_groene_pijl.svg by Preupellor (19/11/2022)
+
+All audio tracks are taken from https://mixkit.co/free-sound-effects/:
+-> Arcade retro game over
+-> Small group cheer and applause
+-> Light rain loop
+"
+alignment = 0
+autowrap_mode = 2
+metadata/_tab_index = 2
+
+[connection signal="pressed" from="HomeButton" to="." method="OnHomeButtonPressed"]

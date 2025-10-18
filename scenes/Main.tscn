@@ -1,0 +1,111 @@
+[gd_scene load_steps=10 format=3 uid="uid://dy7w20scfub5v"]
+
+[ext_resource type="PackedScene" uid="uid://c5nicpyorw47y" path="res://scenes/SelectionMenu.tscn" id="1_elqb8"]
+[ext_resource type="Script" uid="uid://bwa80a0g71ekx" path="res://scripts/Main.cs" id="1_rarhs"]
+[ext_resource type="PackedScene" uid="uid://dk7ls0oq53efm" path="res://scenes/Info.tscn" id="3_nxtc6"]
+[ext_resource type="AudioStream" uid="uid://dvwdfi3gulr5j" path="res://assets/sounds/mixkit-light-rain-loop-2393.wav" id="4_jlsqs"]
+[ext_resource type="Texture2D" uid="uid://dy6hme40d1ka2" path="res://assets/textures/Kenney_gameIcons/PNG/White/1x/forward.png" id="4_nxtc6"]
+[ext_resource type="Script" uid="uid://dbw6sibd4ysqw" path="res://scripts/Music.cs" id="5_q8u5g"]
+[ext_resource type="Texture2D" uid="uid://cgqb5ip1r6v58" path="res://assets/textures/Kenney_gameIcons/PNG/White/1x/exitRight.png" id="5_vcsgt"]
+[ext_resource type="Texture2D" uid="uid://id1igeo4veek" path="res://assets/textures/Kenney_gameIcons/PNG/White/1x/gear.png" id="6_jlsqs"]
+[ext_resource type="Texture2D" uid="uid://c0b2d47u163vr" path="res://assets/textures/Kenney_gameIcons/PNG/White/1x/information.png" id="7_jlsqs"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_rarhs")
+_backgroundMusicPlayerPath = NodePath("BackgroundMusicPlayer")
+_exitConfirmationPath = NodePath("ExitConfirmation")
+
+[node name="SelectionMenu" parent="." instance=ExtResource("1_elqb8")]
+visible = false
+
+[node name="Info" parent="." instance=ExtResource("3_nxtc6")]
+visible = false
+
+[node name="Title" type="RichTextLabel" parent="."]
+offset_left = 79.0
+offset_top = 49.0
+offset_right = 1058.0
+offset_bottom = 151.0
+theme_override_font_sizes/bold_italics_font_size = 64
+theme_override_font_sizes/italics_font_size = 64
+theme_override_font_sizes/mono_font_size = 64
+theme_override_font_sizes/normal_font_size = 64
+theme_override_font_sizes/bold_font_size = 64
+text = "Rock Paper Scissors Minus One"
+
+[node name="BackgroundMusicPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_jlsqs")
+bus = &"Volume"
+
+[node name="Music" type="Node" parent="."]
+script = ExtResource("5_q8u5g")
+
+[node name="Container" type="FlowContainer" parent="."]
+offset_left = 334.0
+offset_top = 246.0
+offset_right = 465.0
+offset_bottom = 350.0
+scale = Vector2(3, 3)
+alignment = 1
+
+[node name="PlayButton" type="TextureButton" parent="Container"]
+layout_mode = 2
+texture_normal = ExtResource("4_nxtc6")
+texture_pressed = ExtResource("4_nxtc6")
+texture_hover = ExtResource("4_nxtc6")
+texture_disabled = ExtResource("4_nxtc6")
+texture_focused = ExtResource("4_nxtc6")
+stretch_mode = 0
+
+[node name="InfoButton" type="TextureButton" parent="Container"]
+layout_mode = 2
+texture_normal = ExtResource("7_jlsqs")
+stretch_mode = 0
+
+[node name="SettingsButton" type="TextureButton" parent="Container"]
+layout_mode = 2
+texture_normal = ExtResource("6_jlsqs")
+texture_pressed = ExtResource("6_jlsqs")
+texture_hover = ExtResource("6_jlsqs")
+texture_disabled = ExtResource("6_jlsqs")
+texture_focused = ExtResource("6_jlsqs")
+stretch_mode = 0
+
+[node name="QuitButton" type="TextureButton" parent="Container"]
+layout_mode = 2
+texture_normal = ExtResource("5_vcsgt")
+texture_pressed = ExtResource("5_vcsgt")
+texture_hover = ExtResource("5_vcsgt")
+texture_disabled = ExtResource("5_vcsgt")
+texture_focused = ExtResource("5_vcsgt")
+stretch_mode = 0
+
+[node name="ExitConfirmation" type="Popup" parent="."]
+title = "Are you sure you want to quit?"
+initial_position = 1
+size = Vector2i(500, 200)
+borderless = false
+
+[node name="YesButton" type="Button" parent="ExitConfirmation"]
+offset_left = 64.0
+offset_top = 98.0
+offset_right = 171.0
+offset_bottom = 157.0
+theme_override_font_sizes/font_size = 32
+text = "Yes"
+
+[node name="NoButton" type="Button" parent="ExitConfirmation"]
+offset_left = 325.0
+offset_top = 102.0
+offset_right = 423.0
+offset_bottom = 160.0
+theme_override_font_sizes/font_size = 32
+text = "No"
+
+[connection signal="finished" from="BackgroundMusicPlayer" to="." method="OnBackgroundMusicFinished"]
+[connection signal="pressed" from="Container/PlayButton" to="." method="OnPlayButtonPressed"]
+[connection signal="pressed" from="Container/InfoButton" to="." method="OnInfoButtonPressed"]
+[connection signal="pressed" from="Container/SettingsButton" to="." method="OnSettingsButtonPressed"]
+[connection signal="pressed" from="Container/QuitButton" to="." method="OnQuitButtonPressed"]
+[connection signal="pressed" from="ExitConfirmation/YesButton" to="." method="OnConfirmExit"]
+[connection signal="pressed" from="ExitConfirmation/NoButton" to="." method="OnStay"]
