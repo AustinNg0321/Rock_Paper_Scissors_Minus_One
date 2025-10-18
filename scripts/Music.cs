@@ -23,6 +23,6 @@ public partial class Music : Node
 
     public static void UpdateVolume()
     {
-        AudioServer.SetBusVolumeDb(AudioServer.GetBusIndex("Volume"), Mathf.LinearToDb(_volume));
+        AudioServer.SetBusVolumeDb(AudioServer.GetBusIndex("Master"), Mathf.LinearToDb(_volume));
     }
 }
