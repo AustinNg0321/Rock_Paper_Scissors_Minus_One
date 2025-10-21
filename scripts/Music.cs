@@ -3,6 +3,10 @@ using System;
 
 public partial class Music : Node
 {
+    /* 
+     * volume ranges from 0.0 to 1.0
+     * the default volume is set to the maximum volume
+     */
     private static float _volume = 1.0f;
 
     public static void PlayMusic(AudioStreamPlayer asp, AudioStreamWav music)

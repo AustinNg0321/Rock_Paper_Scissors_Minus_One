@@ -26,7 +26,7 @@ _chooseRPS2Path = NodePath("PlayerMove/ChooseRPS2")
 _botDisplay1Path = NodePath("BotMove/Display1")
 _botDisplay2Path = NodePath("BotMove/Display2")
 _botLabelPath = NodePath("Labels/BotLabel")
-_tournamentLabelPath = NodePath("Labels/TournamentLabel")
+_tournamentTypeLabelPath = NodePath("Labels/TournamentLabel")
 _wdlLabelPath = NodePath("Labels/WDLLabel")
 _warningLabelPath = NodePath("Labels/WarningLabel")
 _roundLabelPath = NodePath("Labels/RoundLabel")
@@ -250,7 +250,6 @@ theme_override_font_sizes/font_size = 64
 text = "/"
 
 [node name="SoundEffectPlayer" type="AudioStreamPlayer" parent="."]
-bus = &"Volume"
 
 [connection signal="NextRound" from="." to="." method="OnNextRound"]
 [connection signal="NextRound" from="." to="ConfirmMoveButton" method="OnNextRound"]

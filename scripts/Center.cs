@@ -2,24 +2,38 @@ using Godot;
 using System;
 
 /*
- * Center class:
+ * Center: the main gameplay scene
+ * -> Start/End a tournament/round/stage
+ * -> Communicate with BotMove (the bot logic class) and other classes to control the behaviour of 
+ *    buttons, text labels, etc. in the scene
  * 
- * This is the main gameplay scene for implementing the core game mechanics, e.g.
- * -> Start/End a tournament/game
- * -> Start/End a round
- * -> Moving from 1 stage to another in each round (ConfirmMove and RemoveHand)
- * -> Communicate with the bot (the BotMove class) to arrive at a final bot move
- * -> Communicate with other children to control the behaviour of buttons, 
- *    text labels, etc. in the scene
+ * Each tournament is divided into round(s), and each round is divided into 2 stages:
+ * -> Stage 1: Each player or bot picks rock/paper/scissors on each hand
+ * -> Stage 2: Each player or bot chooses one hand to remove to decide on a final move
+ * 
+ * The winner is determined according to classic rock paper scissors results of the final move
+ * of each player: paper beats rock, scissors beats paper, rock beats scissors.
+ * A tournament ends when a round ends in Classic mode or when there is a winner in other game modes
+ *
+ * Additional details:
+ * -> The game mode, difficulty, round number, and the current number of wins/draws/losses are
+ *    on the top of the scene
+ * -> In each stage, the player chooses their moves by pressing buttons on the left and finalize
+ *    their moves by pressing the button in the middle
+ * -> Each round ends with the w/d/l values updated and starts after a 2 second pause
+ * -> At the end of each game, the result is announced and players can choose to play again by
+ *    pressing the play again button on the bottom right
+ *
+ * In this code, rock is enumerated as 0, paper as 1, and scissors as 2
  */
 public partial class Center : Node2D
 {
     /*
      * Custom signals: 
      * -> SetDifficulty: stores the transferred difficulty data in _difficulty
-     * -> SendPlayerMoves: sends the 2 initial player moves to the "bot" (the BotMove class) that allows
-     *    the bot to decide moves based on the player's moves
-     * -> NextRound: If the tournament has not ended, start a new round 2 seconds after the current round ends
+     * -> SendPlayerMoves: sends the 2 initial player moves to the BotMove, allowing the bot to generate
+     *    actions based on player moves
+     * -> NextRound: If the tournament has not ended yet, start a new round
      */
     [Signal] public delegate void SetDifficultyEventHandler(string difficulty);
     [Signal] public delegate void SendPlayerMovesEventHandler(int[] arr);
@@ -27,7 +41,6 @@ public partial class Center : Node2D
 
     public enum Move { ROCK = 0, PAPER = 1, SCISSORS = 2};
 
-    // Loading image
     // Loading image
     private static Texture2D _rockImage = GD.Load<Texture2D>("res://assets/textures/rock.png");
     private static Texture2D _paperImage = GD.Load<Texture2D>("res://assets/textures/paper.png");       
@@ -41,27 +54,27 @@ public partial class Center : Node2D
     private static ImageTexture _scissorsTexture = ImageTexture.CreateFromImage(_scissorsImage.GetImage());
     private static ImageTexture _greenArrowTexture = ImageTexture.CreateFromImage(_greenArrowImage.GetImage());
     private static ImageTexture _redArrowTexture = ImageTexture.CreateFromImage(_redArrowImage.GetImage());
-
+    
     private static ImageTexture blank = null;
 
     /*
      * Private static variables:
      *
-     * _tournament and _difficulty are initialized and overwritten by tournament and difficulty arguments 
-     * sent when the StartGame signal is emitted. _bestOf is determined directly from the tournament type
+     * _tournamentType and _difficulty are initialized and overwritten by tournament and difficulty arguments 
+     * sent when the StartGame signal is emitted. _firstToWin is determined directly from the tournament type
      *
      * _botMove stores the final bot move after the bot chose a hand to remove
-     * _playerRound1Moves stores the 2 player moves after the first stage
-     * _playerMove stores the player's final move after removing a hand
+     * _playerStage1Moves stores the 2 player moves after the first stage
+     * _playerFinalMove stores the player's final move after removing a hand
      *
      * _playerScore, _numDraws, _botScore represents the number of games won, drawn, and lost respectively
      */
-    private static string _tournament = "Classic";
-    private static int _bestOf = 1;
+    private static string _tournamentType = "Classic";
+    private static int _firstToWin = 1;
     private static string _difficulty = "Easy";
     private static int _botMove;
-    private static int[] _playerRound1Moves = new int[2];
-    private static int _playerMove;
+    private static int[] _playerStage1Moves = new int[2];
+    private static int _playerFinalMove;
     private static int _playerScore = 0;
     private static int _botScore = 0;
     private static int _numDraws = 0;
@@ -70,7 +83,7 @@ public partial class Center : Node2D
     private static AudioStreamWav _loseMusic = GD.Load<AudioStreamWav>("res://assets/sounds/mixkit-arcade-retro-game-over-213.wav");
     private static bool _loopSoundEffect = false;
 
-    // ...
+    // Exported NodePaths
     [Export] private NodePath _timerPath;
     [Export] private NodePath _playAgainButtonPath;
     [Export] private NodePath _remove1Path;
@@ -80,21 +93,20 @@ public partial class Center : Node2D
     [Export] private NodePath _botDisplay1Path;
     [Export] private NodePath _botDisplay2Path;
     [Export] private NodePath _botLabelPath;
-    [Export] private NodePath _tournamentLabelPath;
+    [Export] private NodePath _tournamentTypeLabelPath;
     [Export] private NodePath _wdlLabelPath;
     [Export] private NodePath _warningLabelPath;
     [Export] private NodePath _roundLabelPath;
     [Export] private NodePath _playerScoreLabelPath;
     [Export] private NodePath _botScoreLabelPath;
     [Export] private NodePath _drawLabelPath;
-
     [Export] private NodePath _moveHelperPath;
     [Export] private NodePath _confirmMoveButtonPath;
     [Export] private NodePath _removeHandButtonPath;
     [Export] private NodePath _botPath;
-
     [Export] private NodePath _soundEffectPlayerPath;
 
+    // Private static variables
     private Timer _timer;
     private TextureButton _playAgainButton;
     private TextureButton _remove1;
@@ -104,28 +116,19 @@ public partial class Center : Node2D
     private Sprite2D _botDisplay1;
     private Sprite2D _botDisplay2;
     private Label _botLabel;
-    private Label _tournamentLabel;
+    private Label _tournamentTypeLabel;
     private Label _wdlLabel;
     private Label _warningLabel;
     private Label _roundLabel;
     private Label _playerScoreLabel;
     private Label _botScoreLabel;
     private Label _drawLabel;
-
-    
     private MoveHelper _moveHelper;
     private ConfirmMoveButton _confirmMoveButton;
     private RemoveHandButton _removeHandButton;
     private BotMove _bot;
-
     private AudioStreamPlayer _soundEffectPlayer;
     
-
-    /*
-     * Initialization function: 
-     * -> Change text of labels displaying the difficulty and tournament type
-     * -> Initializes a timer for moving from one round to the next
-     */ 
     public override void _Ready()
     {
         _timer = GetNode<Timer>(_timerPath);
@@ -137,7 +140,7 @@ public partial class Center : Node2D
         _botDisplay1 = GetNode<Sprite2D>(_botDisplay1Path);
         _botDisplay2 = GetNode<Sprite2D>(_botDisplay2Path);
         _botLabel = GetNode<Label>(_botLabelPath);
-        _tournamentLabel = GetNode<Label>(_tournamentLabelPath);
+        _tournamentTypeLabel = GetNode<Label>(_tournamentTypeLabelPath);
         _wdlLabel = GetNode<Label>(_wdlLabelPath);
         _warningLabel = GetNode<Label>(_warningLabelPath);
         _roundLabel = GetNode<Label>(_roundLabelPath);
@@ -146,7 +149,7 @@ public partial class Center : Node2D
         _drawLabel = GetNode<Label>(_drawLabelPath);
 
         _botLabel.SetText("Bot (" + _difficulty + ")");
-        _tournamentLabel.SetText(_tournament);
+        _tournamentTypeLabel.SetText(_tournamentType);
         _timer.SetWaitTime(2.0);
         _timer.SetOneShot(true);
 
@@ -161,7 +164,6 @@ public partial class Center : Node2D
         _soundEffectPlayer = GetNode<AudioStreamPlayer>(_soundEffectPlayerPath);
     }
 
-    // Refactored functions for readability
     private void ToggleTextureButton(TextureButton tb, bool visible, bool disabled)
     {
         tb.SetVisible(visible);
@@ -216,24 +218,26 @@ public partial class Center : Node2D
 
     private void DetermineResult()
     {
-        if (_playerScore >= _bestOf)
+        if (_playerScore >= _firstToWin)
         {
             _wdlLabel.SetText("You win!");
             ToggleTextureButton(_playAgainButton, true, false);
             Music.PlayMusic(_soundEffectPlayer, _winMusic);
         }
-        else if (_botScore >= _bestOf)
+        else if (_botScore >= _firstToWin)
         {
             _wdlLabel.SetText("You lose.");
             ToggleTextureButton(_playAgainButton, true, false);
             Music.PlayMusic(_soundEffectPlayer, _loseMusic);
         }
         else
-        {
-            if (_bestOf != 1)
+        {   
+            // Starts another round if it is not classic mode
+            if (_firstToWin != 1)
             {
                 _timer.Start();
             }
+            // Declares a draw otherwise
             else
             {
                 _wdlLabel.SetText("It's a draw.");
@@ -243,34 +247,28 @@ public partial class Center : Node2D
         }
     }
 
-    /* 
-     * Starts a tournament:
-     * -> Initialize everything, e.g. storing variables, initializing button settings in
-     *    other classes, etc.
-     * -> Changes the scene from the selection menu to the gameplay (this scene)
-     */
+    // Starts a tournament from SelectionMenu
     private void OnStartGame(string tournament, string difficulty)
     {
-        // This solves the issue that GetTree() returns null and does not work
         if (!IsInsideTree())
         {
             return;
         }
         GetTree().ChangeSceneToFile("res://scenes/Center.tscn");
         
-        _tournament = tournament;
+        _tournamentType = tournament;
         _difficulty = difficulty;
-        if (_tournament.Equals("Classic"))
+        if (_tournamentType.Equals("Classic"))
         {
-            _bestOf = 1;
+            _firstToWin = 1;
         }
-        else if (_tournament.Equals("First To Win 3"))
+        else if (_tournamentType.Equals("First To Win 3"))
         {
-            _bestOf = 3;
+            _firstToWin = 3;
         }
         else
         {
-            _bestOf = 5;
+            _firstToWin = 5;
         }
 
         // For transferring difficulty data
@@ -278,14 +276,8 @@ public partial class Center : Node2D
     }
 
     /*
-     * Finalizes the 2 initial player moves and transitions to the next stage of the round
-     * 
-     * Checks if the player chooses move for both hands
-     * -> Yes:
-     *    -> Store stage 1 moves within the class (in _playerRound1Moves)
-     *    -> Disable r/p/s buttons and enable button for choosing which hand to remove
-     *    -> Send player moves to the bot (the BotMove class)
-     * -> No: Show a warning text
+     * Finalizes player stage 1 moves and transitions to the next stage of the round
+     * Shows a warning if the player has not chosen move for both hands
      */
     private void OnConfirmMoveButtonPressed()
     {
@@ -296,8 +288,8 @@ public partial class Center : Node2D
 
         if (_moveHelper.HasPlayerMadeAllMoves())
         {
-            _playerRound1Moves[0] = GetMoveFromButtonGroup(_chooseRPS1);
-            _playerRound1Moves[1] = GetMoveFromButtonGroup(_chooseRPS2);
+            _playerStage1Moves[0] = GetMoveFromButtonGroup(_chooseRPS1);
+            _playerStage1Moves[1] = GetMoveFromButtonGroup(_chooseRPS2);
 
             ToggleMultipleTextureButtons(_chooseRPS1, false, true);
             ToggleMultipleTextureButtons(_chooseRPS2, false, true);
@@ -306,7 +298,7 @@ public partial class Center : Node2D
 
             _warningLabel.SetText("");
 
-            EmitSignal(SignalName.SendPlayerMoves, _playerRound1Moves);
+            EmitSignal(SignalName.SendPlayerMoves, _playerStage1Moves);
         }
         else
         {
@@ -314,12 +306,7 @@ public partial class Center : Node2D
         }
     }
 
-    /*
-     * Checks if the player chose which hand to remove
-     * -> Yes: store the final player move in the class (in _playerMove) and disable the 
-     *    buttons for remove hand choice
-     * -> No: Show a warning text
-     */
+    // Shows a warning if the player has not chosen which hand to remove
     private void OnRemoveHandButtonPressed()
     {
         if (!IsInsideTree())
@@ -331,11 +318,11 @@ public partial class Center : Node2D
         {
             if (_remove1.IsPressed())
             {
-                _playerMove = _playerRound1Moves[1];
+                _playerFinalMove = _playerStage1Moves[1];
             }
             else
             {
-                _playerMove = _playerRound1Moves[0];
+                _playerFinalMove = _playerStage1Moves[0];
             }
             
             ToggleTextureButton(_remove1, false, true);
@@ -390,11 +377,6 @@ public partial class Center : Node2D
         }
     }
 
-    /*
-     * Start the next round if the tournament has not ended
-     * -> Shows the updated scores
-     * -> Resets all buttons and displays (for r/p/s moves)
-     */
     private void OnNextRound()
     {
         _roundLabel.SetText("Round " + (_playerScore + _numDraws + _botScore + 1).ToString());
@@ -418,7 +400,6 @@ public partial class Center : Node2D
         _remove2.SetPressed(false);
     }
 
-    // Emits the NextRound signal to start the next round once the time runs out in the timer
     private void OnTimerTimeout()
     {
         EmitSignal(SignalName.NextRound);
@@ -427,17 +408,14 @@ public partial class Center : Node2D
     /*
      * The EndRound signal is triggered/emitted in the BotMove class after the bot decides 
      * on its final move
-     *
-     * -> Update the scores and show the updated scores
-     * -> Announce the tournament result (draw is only possible in classic mode)
      */
     private void OnEndRound()
     {
-        if ((_playerMove - _botMove + 3) % 3 == 0)
+        if ((_playerFinalMove - _botMove + 3) % 3 == 0)
         {
             _numDraws++;
         }
-        else if ((_playerMove - _botMove + 3) % 3 == 1)
+        else if ((_playerFinalMove - _botMove + 3) % 3 == 1)
         {
             _playerScore++;
         }
@@ -452,14 +430,13 @@ public partial class Center : Node2D
         DetermineResult();
     }
 
-    // Resets the scores and goes back to the selection menu, getting ready to start another tournament
+    // Resets the scores and goes back to the selection menu
     private void OnPlayAgainButtonPressed()
     {
         _playerScore = 0;
         _botScore = 0;
         _numDraws = 0;
 
-        // This solves the issue that GetTree() returns null and does not work
         if (!IsInsideTree())
         {
             return;

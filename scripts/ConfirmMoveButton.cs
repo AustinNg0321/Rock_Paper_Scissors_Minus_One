@@ -1,15 +1,11 @@
 using Godot;
 using System;
 
-// This class controls the behaviour of the ConfirmMoveButton
 public partial class ConfirmMoveButton : Button
 {   
     private MoveHelper _moveHelper;
 
-    /* 
-     * Initialization function
-     * -> Enable and show the button initially
-     */
+    // Enable and show the button initially
     public override void _Ready()
     {
         this.SetDisabled(false);
@@ -22,8 +18,8 @@ public partial class ConfirmMoveButton : Button
     }
 
     /*
-     * The ConfirmMoveButton is disabled and hidden when pressed provided that
-     * the player has selected a move for each hand
+     * Disable and hide the button when it is pressed and the player has selected a move for both hands
+     * in stage 1
      */
     private void OnPressed()
     {
@@ -40,7 +36,7 @@ public partial class ConfirmMoveButton : Button
         }
     }
 
-    // The ConfirmMoveButton is reset (re-enabled and shown) each round
+    // The button is reset (re-enabled and shown) each round
     private void OnNextRound()
     {
         this.SetDisabled(false);

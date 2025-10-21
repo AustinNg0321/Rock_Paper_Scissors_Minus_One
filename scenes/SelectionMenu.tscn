@@ -7,7 +7,7 @@
 
 [node name="SelectionMenu" type="Node2D"]
 script = ExtResource("1_8he5u")
-_tournamentItemListPath = NodePath("TournamentMenu/ItemList")
+_tournamentTypeItemListPath = NodePath("TournamentMenu/ItemList")
 _difficultyItemListPath = NodePath("DifficultyMenu/ItemList")
 _warningPath = NodePath("Warning")
 

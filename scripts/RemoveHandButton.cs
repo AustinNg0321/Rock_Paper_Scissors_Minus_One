@@ -1,15 +1,11 @@
 using Godot;
 using System;
 
-// This class controls the behaviour of the RemoveHandButton
 public partial class RemoveHandButton : Button
 {
     private MoveHelper _moveHelper;
 
-    /* 
-     * Initialization function
-     * -> Disable and hide the button initially
-     */
+    // Disable and hide the button initially
     public override void _Ready()
     {
         this.SetDisabled(true);
@@ -21,10 +17,7 @@ public partial class RemoveHandButton : Button
         _moveHelper = helper;
     }
 
-    /*
-     * The ConfirmMoveButton is disabled and hidden when pressed provided that
-     * the player has chosen a hand to remove
-     */
+    // Disable and hide the button when it is pressed and the player has chosen a hand to remove in stage 2
     private void OnPressed()
     {
         if (!IsInsideTree())
@@ -39,7 +32,7 @@ public partial class RemoveHandButton : Button
         }
     }
 
-    // The button should be enabled and shown in stage 2 (after player confirms initial moves)
+    // The button should be enabled and shown at the start of stage 2
     private void OnConfirmMoveButtonPressed()
     {
         if (!IsInsideTree())
